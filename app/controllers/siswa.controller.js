@@ -1,5 +1,6 @@
 const db = require("../../databases");
 const SiswaVal = require("../validations/siswaval");
+const moment = require("moment");
 
 module.exports = class SiswaController {
   static async getAll(req, res) {
@@ -7,8 +8,8 @@ module.exports = class SiswaController {
       const { page = 1, limit = 25, search = "", order = "asc" } = req.query;
 
       const siswa = await db("siswa as s")
-        .join("kelas as k", "s.kelas_id", "k.id")
-        .join("wali_murid as w", "s.wali_murid_id", "w.id")
+        .leftJoin("kelas as k", "k.id", "s.kelas_id")
+        .leftJoin("wali_murid as w", "w.id", "s.wali_murid_id")
         .select(
           "s.id",
           "s.nama_siswa",
@@ -22,18 +23,18 @@ module.exports = class SiswaController {
           "s.updated_at",
           "k.nama_kelas",
           "w.nama_wali_murid",
-          "w.no_telp_wali_murid",
+          "w.no_telp_wali",
           "w.hubungan"
         )
         .limit(+limit)
         .offset(+limit * +page - +limit)
         .orderBy("created_at", order)
-        .where("id", "like", `%${search}%`);
+        .where("s.nama_siswa", "like", `%${search}%`);
 
       res.json({
         status: "success",
         message: "Get all data",
-        data: siswa.map((d) => {
+        siswa: siswa.map((d) => {
           return {
             id: d.id,
             nama_siswa: d.nama_siswa,
@@ -46,7 +47,7 @@ module.exports = class SiswaController {
             kelas: d.nama_kelas,
             wali_murid: {
               nama_wali_murid: d.nama_wali_murid,
-              no_telp_wali_murid: d.no_telp_wali_murid,
+              no_telp_wali: d.no_telp_wali,
               hubungan: d.hubungan,
             },
             created_at: d.created_at,
@@ -75,7 +76,7 @@ module.exports = class SiswaController {
         kelas_id,
         nama_wali_murid,
         hubungan,
-        no_telp_wali_murid,
+        no_telp_wali,
       } = value;
       await db.transaction(async function (trx) {
         //insert data wali
@@ -84,7 +85,7 @@ module.exports = class SiswaController {
           .insert({
             nama_wali_murid,
             hubungan,
-            no_telp_wali_murid,
+            no_telp_wali,
           })
           .catch((err) => {
             trx.rollback;
@@ -139,7 +140,7 @@ module.exports = class SiswaController {
           "s.updated_at",
           "k.nama_kelas",
           "w.nama_wali_murid",
-          "w.no_telp_wali_murid",
+          "w.no_telp_wali",
           "w.hubungan"
         )
         .where("s.id", id)
@@ -162,7 +163,7 @@ module.exports = class SiswaController {
           kelas: siswa.nama_kelas,
           wali_murid: {
             nama_wali_murid: siswa.nama_wali_murid,
-            no_telp_wali_murid: siswa.no_telp_wali_murid,
+            no_telp_wali: siswa.no_telp_wali,
             hubungan: siswa.hubungan,
           },
           created_at: siswa.created_at,
@@ -178,7 +179,7 @@ module.exports = class SiswaController {
       const { id } = req.params;
       const s = await db("siswa").where({ id }).first();
       if (!s) {
-        return res.boom.notfound("Siswa tidak ditemukan");
+        return res.boom.notFound("Siswa tidak ditemukan");
       }
 
       const { error, value } = SiswaVal.validate(req.body);
@@ -196,7 +197,7 @@ module.exports = class SiswaController {
         kelas_id,
         nama_wali_murid,
         hubungan,
-        no_telp_wali_murid,
+        no_telp_wali,
       } = value;
       await db.transaction(async function (trx) {
         //update data wali
@@ -205,7 +206,7 @@ module.exports = class SiswaController {
           .update({
             nama_wali_murid,
             hubungan,
-            no_telp_wali_murid,
+            no_telp_wali,
           })
           .where({ id: s.wali_murid_id })
           .catch((err) => {
@@ -246,7 +247,7 @@ module.exports = class SiswaController {
       const { id } = req.params;
       const s = await db("siswa").where({ id }).first();
       if (!s) {
-        return res.boom.notfound("Siswa tidak ditemukan");
+        return res.boom.notFound("Siswa tidak ditemukan");
       }
 
       await db.transaction(async function (trx) {

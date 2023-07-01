@@ -29,17 +29,16 @@ module.exports = class KelasController {
         return res.boom.badData(error.message);
       }
       const { nama_kelas } = value;
-      const kelas = await db("kelas").insert({
+      await db("kelas").insert({
         nama_kelas,
       });
       
       res.json({
         status: "success",
         message: "Kelas berhasil ditambahkan",
-        data: kelas,
       });
     } catch (error) {
-  (error);
+      return res.boom.badRequest(error.message);
     }
   }
 
@@ -53,7 +52,7 @@ module.exports = class KelasController {
       const { id } = req.params;
       const namakelas = await db("kelas").where({ id }).first();
       if (!namakelas) {
-        return boom.notFound("kelas not found");
+        return res.boom.notFound("kelas not found");
       }
 
         //update data note
@@ -76,7 +75,7 @@ module.exports = class KelasController {
       const data = await db("kelas").where({ id }).first();
 
       if (!data) {
-        return boom.notFound("kelas not found");
+        return  res.boom.notFound("kelas not found");
       } else {
         await db("kelas").where({ id }).del();
 

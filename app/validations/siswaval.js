@@ -6,7 +6,7 @@ module.exports = Joi.object({
     "string.empty": "Nama siswa tidak boleh kosong",
     "any.required": "Nama siswa harus diisi",
   }),
-  nisn: Joi.number().required().max(10).messages({
+  nisn: Joi.number().required().messages({
     "number.base": "NISN harus berupa angka",
     "number.empty": "NISN tidak boleh kosong",
     "number.max": "NISN tidak boleh lebih dari 10 digit",
@@ -26,7 +26,7 @@ module.exports = Joi.object({
     "any.required": "Jenis kelamin harus diisi",
     "any.only": "Jenis kelamin harus berupa L atau P",
   }),
-  no_telp: Joi.number().required().max(15).messages({
+  no_telp: Joi.number().required().messages({
     "number.base": "No telp harus berupa angka",
     "number.empty": "No telp tidak boleh kosong",
     "number.max": "No telp tidak boleh lebih dari 15 digit",
@@ -50,7 +50,7 @@ module.exports = Joi.object({
     "any.required": "Hubungan harus diisi",
     "any.only": "Hubungan harus berupa ayah, ibu, atau saudara",
   }),
-  no_telp_wali: Joi.number().required().max(15).messages({
+  no_telp_wali: Joi.number().required().messages({
     "number.base": "No telp wali harus berupa angka",
     "number.empty": "No telp wali tidak boleh kosong",
     "number.max": "No telp wali tidak boleh lebih dari 15 digit",
