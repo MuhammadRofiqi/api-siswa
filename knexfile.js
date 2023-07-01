@@ -17,7 +17,10 @@ module.exports = {
       database: MYSQL_NAME
     },
     migrations: {
-      directory: "./database/migrations"
+      directory: "./databases/migrations"
+    },
+    seeds: {
+      directory: "./databases/seeds"
     }
 
 
