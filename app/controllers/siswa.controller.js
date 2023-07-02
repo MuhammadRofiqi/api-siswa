@@ -65,6 +65,14 @@ module.exports = class SiswaController {
       if (error) {
         return res.boom.badData(error.message);
       }
+      const siswa = await db("siswa").where("nisn", value.nisn).first();
+      if (siswa) {
+        return res.boom.badData("NISN sudah terdaftar");
+      }
+      const kelas = await db("kelas").where("id", value.kelas_id).first();
+      if (!kelas) {
+        return res.boom.badData("Kelas tidak ditemukan");
+      }
       const {
         nama_siswa,
         nisn,

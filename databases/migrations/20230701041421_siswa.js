@@ -6,7 +6,7 @@ exports.up = function(knex) {
   return knex.schema.createTable("siswa", (t) => {
     t.uuid("id").primary();
     t.string("nama_siswa", 50).notNullable();
-    t.string("nisn", 10).notNullable();
+    t.string("nisn", 10).unique().notNullable();
     t.string("tempat_lahir", 50).notNullable();
     t.date("tanggal_lahir").notNullable();
     t.enum("jenis_kelamin", ["L", "P"]).notNullable();
