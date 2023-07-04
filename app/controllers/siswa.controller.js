@@ -160,7 +160,7 @@ module.exports = class SiswaController {
       res.json({
         status: "success",
         message: "Get data by id",
-        siswa
+        data: siswa
         // data: {
         //   id: siswa.id,
         //   nama_siswa: siswa.nama_siswa,
