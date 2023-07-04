@@ -134,24 +134,24 @@ module.exports = class SiswaController {
     try {
       const { id } = req.params;
       const siswa = await db("siswa as s")
-        .join("kelas as k", "s.kelas_id", "k.id")
-        .join("wali_murid as w", "s.wali_murid_id", "w.id")
-        .select(
-          "s.id",
-          "s.nama_siswa",
-          "s.nisn",
-          "s.tempat_lahir",
-          "s.tanggal_lahir",
-          "s.jenis_kelamin",
-          "s.no_telp",
-          "s.alamat",
-          "s.created_at",
-          "s.updated_at",
-          "k.nama_kelas",
-          "w.nama_wali_murid",
-          "w.no_telp_wali",
-          "w.hubungan"
-        )
+        .leftJoin("kelas as k", "s.kelas_id", "k.id")
+        .leftJoin("wali_murid as w", "s.wali_murid_id", "w.id")
+        // .select(
+        //   "s.id",
+        //   "s.nama_siswa",
+        //   "s.nisn",
+        //   "s.tempat_lahir",
+        //   "s.tanggal_lahir",
+        //   "s.jenis_kelamin",
+        //   "s.no_telp",
+        //   "s.alamat",
+        //   "s.created_at",
+        //   "s.updated_at",
+        //   "k.nama_kelas",
+        //   "w.nama_wali_murid",
+        //   "w.no_telp_wali",
+        //   "w.hubungan"
+        // )
         .where("s.id", id)
         .first();
       if (!siswa) {
@@ -160,24 +160,25 @@ module.exports = class SiswaController {
       res.json({
         status: "success",
         message: "Get data by id",
-        data: {
-          id: siswa.id,
-          nama_siswa: siswa.nama_siswa,
-          nisn: siswa.nisn,
-          tempat_lahir: siswa.tempat_lahir,
-          tanggal_lahir: moment(siswa.tanggal_lahir).format("LL"),
-          jenis_kelamin: siswa.jenis_kelamin == "L" ? "Laki-laki" : "Perempuan",
-          no_telp: siswa.no_telp,
-          alamat: siswa.alamat,
-          kelas: siswa.nama_kelas,
-          wali_murid: {
-            nama_wali_murid: siswa.nama_wali_murid,
-            no_telp_wali: siswa.no_telp_wali,
-            hubungan: siswa.hubungan,
-          },
-          created_at: siswa.created_at,
-          updated_at: siswa.updated_at,
-        },
+        siswa
+        // data: {
+        //   id: siswa.id,
+        //   nama_siswa: siswa.nama_siswa,
+        //   nisn: siswa.nisn,
+        //   tempat_lahir: siswa.tempat_lahir,
+        //   tanggal_lahir: moment(siswa.tanggal_lahir).format("LL"),
+        //   jenis_kelamin: siswa.jenis_kelamin == "L" ? "Laki-laki" : "Perempuan",
+        //   no_telp: siswa.no_telp,
+        //   alamat: siswa.alamat,
+        //   kelas: siswa.nama_kelas,
+        //   wali_murid: {
+        //     nama_wali_murid: siswa.nama_wali_murid,
+        //     no_telp_wali: siswa.no_telp_wali,
+        //     hubungan: siswa.hubungan,
+        //   },
+        //   created_at: siswa.created_at,
+        //   updated_at: siswa.updated_at,
+        // },
       });
     } catch (error) {
       return res.boom.badRequest(error.message);
